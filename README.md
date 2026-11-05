@@ -22,7 +22,7 @@ conda activate hw6_working
 ### 2. Install Legacy Biopython Component
 Since legacy components fail compiler checks under modern Python runtimes on specific architectures, map the module tree directly:
 
-1. Download the reference archive: **[Biopython 1.77 (ZIP)](http://biopython.org/DIST/biopython-1.77.zip))**.
+1. Download the reference archive: **[Biopython 1.77 (ZIP)](https://biopython.org/wiki/Download)**.
 2. Unpack the ZIP archive on your local machine.
 3. Locate the core folder named **`Bio`** and copy it.
 4. Paste the **`Bio`** folder directly into your active Conda environment's `site-packages` directory:

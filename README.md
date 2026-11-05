@@ -1,9 +1,17 @@
 # Homework 6 Runner (`pain.py`)
 
+![Python Version](https://shields.io)
+![Platform](https://shields.io)
+![License](https://shields.io)
+
+An official cross-platform deployment and environment configuration guide for executing `pain.py` on macOS and Linux. Follow these instructions to set up the runtime and dependencies without modifying the assignment source code.
+
+---
+
 ## 💻 Prerequisites
 
 Ensure your local system matches one of the following specifications:
-* **Operating System:** macOS 14.0+ (Sonoma or newer) OR Linux (Ubuntu 20.04+, Debian, Fedora, CentOS, etc.).
+* **Operating System:** macOS 14.0+ (Sonoma or newer) OR Linux (Ubuntu 20.04+, Debian, Fedora, etc.).
 * **Architecture:** Apple Silicon (`osx-arm64`), Intel/AMD (`x86_64`), or ARM64 Linux (`linux-aarch64`).
 * **Environment Manager:** Anaconda / Miniconda.
 
@@ -25,35 +33,44 @@ Since legacy components fail compiler checks under modern Python runtimes on spe
 1. Download the reference archive: **[Biopython 1.77 (ZIP)](https://github.com)**.
 2. Unpack the ZIP archive on your local machine.
 3. Locate the core folder named **`Bio`** and copy it.
-4. Paste the **`Bio`** folder directly into your active Conda environment's `site-packages` directory.
+4. Paste the **`Bio`** folder directly into your active Conda environment's `site-packages` directory:
 
-* **On macOS:** Open Finder, press `Cmd + Shift + G`, and navigate to:
-  ```text
-  /opt/miniconda3/envs/hw6_working/lib/python3.14/site-packages/
-  ```
-* **On Linux / WSL:** Copy the folder using your terminal:
-  ```bash
-  cp -R /path/to/extracted/biopython-177/Bio ~/miniconda3/envs/hw6_working/lib/python3.14/site-packages/
-  # Note: If you use Anaconda instead of Miniconda, change 'miniconda3' to 'anaconda3' in the path.
-  ```
+   * **On macOS:** Open Finder, press `Cmd + Shift + G`, and navigate to:
+     ```text
+     /opt/miniconda3/envs/hw6_working/lib/python3.14/site-packages/
+     ```
+   * **On Linux:** Copy the folder using your terminal:
+     ```bash
+     cp -R /path/to/extracted/biopython-177/Bio ~/miniconda3/envs/hw6_working/lib/python3.14/site-packages/
+     ```
+     *(Note: If you use Anaconda instead of Miniconda, change 'miniconda3' to 'anaconda3' in the path).*
 
-### 3. Apply Pandas Optimization Patch
-Run the following automation script in your terminal to adjust the internal data frame validation settings for this environment:
+### 3. Manual Pandas Validation Adjustment
+To prevent Pandas from throwing a fatal validation error when encountering a Python `set` structure, follow these steps to adjust the global type validator:
 
-```bash
-python -c "
-import pandas as pd, os
-path = os.path.dirname(pd.__file__) + '/core/frame.py'
-with open(path, 'r') as f:
-    code = f.read()
-target_old = '        if isinstance(index, set):\n            raise ValueError(\"index cannot be a set\")'
-target_new = '        if isinstance(index, set):\n            index = list(index)'
-if target_old in code:
-    with open(path, 'w') as f:
-        f.write(code.replace(target_old, target_new))
-    print('Pandas environment patch successfully applied!')
-"
-```
+1. Open the core Pandas data types file in your text editor (VS Code, Vim, Nano, etc.):
+   * **On macOS:** `/opt/miniconda3/envs/hw6_working/lib/python3.14/site-packages/pandas/core/dtypes/common.py`
+   * **On Linux:** `~/miniconda3/envs/hw6_working/lib/python3.14/site-packages/pandas/core/dtypes/common.py`
+2. Search for the main validator function using `Ctrl + F` (or `Cmd + F`):
+   ```text
+   def pandas_dtype
+   ```
+3. Insert the type-casting override snippet at the very beginning of the function body:
+
+   **Before:**
+   ```python
+   def pandas_dtype(dtype) -> Dtype:
+       # ... existing internal pandas code ...
+   ```
+
+   **After (Add these three lines with a 4-space indent):**
+   ```python
+   def pandas_dtype(dtype) -> Dtype:
+       if isinstance(dtype, set):
+           dtype = list(dtype)
+       # ... rest of the existing internal pandas code ...
+   ```
+4. Save the file and close the editor.
 
 ---
 
@@ -70,13 +87,9 @@ python pain.py
 ## 🛠️ Troubleshooting
 
 ### `ModuleNotFoundError: No module named 'Bio'`
-* **Cause:** The `Bio` directory was pasted into an incorrect destination or your Conda installation uses a custom root directory.
+* **Cause:** The `Bio` directory was pasted into an incorrect destination or your Conda installation uses a custom root folder.
 * **Fix:** Print your exact active package route by running `python -c "import site; print(site.getsitepackages())"` in your terminal and relocate the `Bio` folder to that specific destination.
 
 ### `IndentationError: expected an indented block...`
-* **Cause:** Corrupted whitespaces or structure changes due to manual syntax edits.
-* **Fix:** Avoid editing library files manually. Reinstall a clean pandas distribution via `conda install --force-reinstall pandas` and re-run the Step 3 automation script.
-
--------------------------------------------------------
-Ждал четверга чтобы сдать дз, так как новый WOW вышел сегодня
-[](photo_2026-11-05 13.51.14.jpeg)
+* **Cause:** Corrupted whitespaces or misaligned indents introduced during manual edits.
+* **Fix:** Ensure you used exactly **4 spaces** for the lines added inside `common.py`. Do not use the `Tab` key. If the file is broken, restore it via `conda install --force-reinstall pandas` and try again.

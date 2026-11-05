@@ -1,13 +1,5 @@
 # Homework 6 Runner (`pain.py`)
 
-![Python Version](https://shields.io)
-![Platform](https://shields.io)
-![License](https://shields.io)
-
-An official cross-platform deployment and environment configuration guide for executing `pain.py` on macOS and Linux. Follow these instructions to set up the runtime and dependencies without modifying the assignment source code.
-
----
-
 ## 💻 Prerequisites
 
 Ensure your local system matches one of the following specifications:

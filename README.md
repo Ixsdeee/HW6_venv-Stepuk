@@ -93,3 +93,7 @@ python pain.py
 ### `IndentationError: expected an indented block...`
 * **Cause:** Corrupted whitespaces or misaligned indents introduced during manual edits.
 * **Fix:** Ensure you used exactly **4 spaces** for the lines added inside `common.py`. Do not use the `Tab` key. If the file is broken, restore it via `conda install --force-reinstall pandas` and try again.
+
+  -------------------------------------------------------
+Ждал четверга чтобы сдать дз, так как новый WOW вышел сегодня
+[](photo_2026-11-05 13.51.14.jpeg)
